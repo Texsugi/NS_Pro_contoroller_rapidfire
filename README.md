@@ -1,4 +1,4 @@
-def GPIO
+#GPIO
 
 outputs = {
     'A': Pin(36, Pin.OUT), 'B': Pin(34, Pin.OUT), 'X': Pin(32, Pin.OUT), 'Y': Pin(27, Pin.OUT),
