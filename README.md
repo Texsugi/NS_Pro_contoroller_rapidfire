@@ -1,4 +1,4 @@
-#GPIO
+GPIO
 
 outputs = {
     'A': Pin(36, Pin.OUT), 'B': Pin(34, Pin.OUT), 'X': Pin(32, Pin.OUT), 'Y': Pin(27, Pin.OUT),
@@ -19,7 +19,7 @@ switches = {
 }
 
 
-# RGB LED (anode common)
+RGBLED(anode common)
 RGB_R = Pin(45, Pin.OUT)
 RGB_G = Pin(46, Pin.OUT)
 RGB_B = Pin(47, Pin.OUT)
