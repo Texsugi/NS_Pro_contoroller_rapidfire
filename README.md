@@ -20,6 +20,7 @@ switches = {
 
 
 RGBLED(anode common)
+
 RGB_R = Pin(45, Pin.OUT)
 RGB_G = Pin(46, Pin.OUT)
 RGB_B = Pin(47, Pin.OUT)
