@@ -18,7 +18,8 @@ switches = {
     '+': Pin(5, Pin.IN, Pin.PULL_UP), '-': Pin(7, Pin.IN, Pin.PULL_UP)
 }
 
-# RGB LED（anode common）
+
+# RGB LED (anode common)
 RGB_R = Pin(45, Pin.OUT)
 RGB_G = Pin(46, Pin.OUT)
 RGB_B = Pin(47, Pin.OUT)
