@@ -283,9 +283,9 @@ RGB_G = Pin(46, Pin.OUT)
 RGB_B = Pin(47, Pin.OUT)
 
 #外部接続用GPIO
-Pin1 = 3.3V \n
-Pin2 = GPIO37 \n
-Pin3 = GPIO38 \n
-Pin4 = GPIO39 \n
-Pin5 = GPIO40 \n
-Pin6 = GND \n
+Pin1 = 3.3V  
+Pin2 = GPIO37  
+Pin3 = GPIO38  
+Pin4 = GPIO39  
+Pin5 = GPIO40  
+Pin6 = GND  
