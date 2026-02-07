@@ -281,3 +281,11 @@ switches = {
 RGB_R = Pin(45, Pin.OUT)
 RGB_G = Pin(46, Pin.OUT)
 RGB_B = Pin(47, Pin.OUT)
+
+#外部接続用GPIO
+Pin1 = 3.3V
+Pin2 = GPIO37
+Pin3 = GPIO38
+Pin4 = GPIO39
+Pin5 = GPIO40
+Pin6 = GND
