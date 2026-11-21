@@ -44,7 +44,7 @@ Firefoxなど、Web Serial APIに対応していないブラウザーでは使�
 1. 配布されたRENCON設定GUIのZIPファイルを展開します。
 2. 展開したフォルダー内の `start_server.bat` を実行します。
 3. ローカルWebサーバーが起動します。
-4. ブラウザーで `http://localhost:8000` を開きます。
+4. ブラウザーで `index.html` を開きます。
 
 ※ Python 3がインストールされていない場合、サーバーを起動できません。
 
