@@ -1,5 +1,7 @@
 # RENCON ユーザーマニュアル（基板 ver2.1／ファームウェア v8）
 
+[English version is here / 英語版はこちら](README.en.md)
+
 Nintendo Switch 純正 Pro コントローラー専用 連射改造基板「RENCON」（基板 ver2.1／ファームウェア v8）の取扱説明書です。
 本書の内容は、ファームウェア v8 の実装に基づいて記述しています。
 
