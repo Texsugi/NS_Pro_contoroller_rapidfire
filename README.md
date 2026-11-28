@@ -1,304 +1,304 @@
-# RENCON ユーザーマニュアル（基板 ver2.1／ファームウェア v8）
+# RENCON User Manual (Board ver2.1 / Firmware v8)
 
-[English version is here / 英語版はこちら](README.en.md)
+[日本語版はこちら / Japanese version](README.jp.md)
 
-Nintendo Switch 純正 Pro コントローラー専用 連射改造基板「RENCON」（基板 ver2.1／ファームウェア v8）の取扱説明書です。
-本書の内容は、ファームウェア v8 の実装に基づいて記述しています。
+This is the user manual for **RENCON**, a rapid-fire mod board for the official Nintendo Switch Pro Controller (board ver2.1 / firmware v8).
+The contents are based on the actual firmware v8 implementation.
 
-購入はこちら（BOOTH）：https://xgames.booth.pm/items/6925334
+Buy it here (BOOTH): https://xgames.booth.pm/items/6925334
 
 ---
 
-## このリポジトリの配布ファイル
+## Files in this repository
 
-| ファイル | 内容 |
+| File | Contents |
 |---|---|
-| Rapidfire2.1_fw_v8.uf2 | **現行ファームウェア（基板 ver2.1用）**。通常はこちらを使用してください |
-| RENCON_Config_GUI.zip | PC設定GUI（「6. PC設定GUI」参照） |
-| GUI_MANUAL.md | PC設定GUI のマニュアル |
-| Factory_Reset.uf2 | 設定初期化用ファームウェア。書き込むと設定が初期状態に戻ります（「13. トラブルシューティング」参照） |
-| Rapidfire_fw_v2.uf2 | 旧バージョン用ファームウェア（旧基板・旧世代用） |
-| MicroPython_fw.uf2 | 旧バージョン用ファームウェア（旧基板・旧世代用） |
+| Rapidfire2.1_fw_v8.uf2 | **Current firmware (for board ver2.1)**. Use this one in normal cases |
+| RENCON_Config_GUI.zip | PC configuration GUI (see "6. PC Configuration GUI") |
+| GUI_MANUAL.md | Manual for the PC configuration GUI |
+| Factory_Reset.uf2 | Factory-reset firmware. Flashing it restores all settings to their initial state (see "13. Troubleshooting") |
+| Rapidfire_fw_v2.uf2 | Firmware for the old version (old board / previous generation) |
+| MicroPython_fw.uf2 | Firmware for the old version (old board / previous generation) |
 
-※現行の基板 ver2.1 には Rapidfire2.1_fw_v8.uf2 を使用してください。旧バージョン用ファイルは現行基板では使用しないでください。
-
----
-
-## 1. 概要
-
-RENCON は、任天堂純正 Pro コントローラーに組み込んで使用する多機能入力制御基板です。
-
-- **16ボタンすべてに、ボタンごとの動作モード**（通常／連射／ダブルクリック連射／トグル）を個別に設定できます
-- 連射の速さは、ボタンを押している時間（ON時間）と離している時間（OFF時間）を **5ms単位** で個別に調整できます
-- **マクロ機能**を搭載。最大4プリセット、各プリセット最大20操作まで登録できます
-- 設定内容は基板のフラッシュメモリに保存され、**電源を切っても保持されます**
-- RGB LED による視覚的フィードバック（通常時は虹色アニメーション）
-- 60秒間操作がないと **ディープスリープ** に移行し、待機時の消費電力を抑えます
-- PC と USB ケーブルで接続し、ブラウザ上の設定 GUI からも設定できます
-
-マイコンには Raspberry Pi Pico 系の RP2354 を採用し、ファームウェアは Pico SDK（C/C++）で開発されています。
+Note: For the current board ver2.1, use Rapidfire2.1_fw_v8.uf2. Do not use the old-version files on the current board.
 
 ---
 
-## 2. 対応ボタン
+## 1. Overview
 
-以下の **16ボタン** が設定対象です。
+RENCON is a multi-function input-control board that is installed inside an official Nintendo Switch Pro Controller.
 
-| 分類 | ボタン |
+- **All 16 buttons can be configured individually**, each with its own operating mode (Normal / Rapid Fire / Double-Click Rapid Fire / Toggle)
+- Rapid-fire speed is set by two values — how long the button is held down (ON time) and how long it is released (OFF time) — each adjustable **in 5 ms steps**
+- **Macro engine built in**: up to 4 presets, with up to 20 actions per preset
+- Settings are saved in the board's flash memory and **are kept even when the power is off**
+- Visual feedback from an RGB LED (rainbow animation in normal use)
+- After 60 seconds without input, the board enters **deep sleep** to minimise standby power consumption
+- It can also be configured from a browser-based GUI by connecting it to a PC with a USB cable
+
+The microcontroller is an RP2354 (Raspberry Pi Pico family), and the firmware is developed with the Pico SDK (C/C++).
+
+---
+
+## 2. Configurable buttons
+
+The following **16 buttons** can be configured.
+
+| Group | Buttons |
 |---|---|
-| メインボタン | A / B / X / Y |
-| 肩ボタン | L / R / ZL / ZR |
-| 十字キー | ↑ / ↓ / ← / → |
-| システム系 | HOME / SS（スクリーンショット） / ＋ / － |
+| Main buttons | A / B / X / Y |
+| Shoulder buttons | L / R / ZL / ZR |
+| D-pad | Up / Down / Left / Right |
+| System | HOME / Capture (SS) / + / - |
 
 ---
 
-## 3. 動作モード
+## 3. Operating modes
 
-ボタンごとに、以下の4つのモードから1つを設定できます。
+Each button can be set to one of the following four modes.
 
-### 3.1 通常（MODE_OFF）
+### 3.1 Normal (MODE_OFF)
 
-- 完全パススルーです。押したらON、離したらOFFになります
-- 連射などの特殊動作はしません
-- **マクロで使用するボタン（トリガーと操作対象）は、このモードにしておく必要があります**（「8. マクロ」参照）
+- Complete pass-through: press = ON, release = OFF
+- No special behaviour such as rapid fire
+- **Buttons used by a macro (both the trigger buttons and the buttons pressed by the macro steps) must be set to this mode** (see "8. Macros")
 
-### 3.2 連射（MODE_RAPID）
+### 3.2 Rapid Fire (MODE_RAPID)
 
-- ボタンを**押している間、連射**します。離すと止まります
-- **素早く2回押し（ダブルクリック）すると、押している間ずっとON（押しっぱなし状態）**になります。再度離すとOFFになります
-- ダブルクリックの判定は、1回目の押下から **250ms以内** に2回目を押すことです
-- 用途例：連打が必要なアクション、押している間だけ連射したい操作
+- **Rapid fire while the button is held**. Release the button to stop
+- **A quick double-press (double-click) latches the input ON for as long as you keep holding the button**. Release it to turn OFF
+- A double-click is counted when the second press happens **within 250 ms** of the first press
+- Examples: actions that need repeated tapping, or inputs you only want to auto-fire while held
 
-### 3.3 ダブルクリック連射（MODE_DOUBLE）
+### 3.3 Double-Click Rapid Fire (MODE_DOUBLE)
 
-- **単押し：通常入力**（押している間だけON）
-- **ダブルクリック（250ms以内に2回押し）：連射開始**。ボタンを離すと連射は止まります
-- 用途例：通常操作と連射を使い分けたい場合
+- **Single press: normal input** (ON only while held)
+- **Double-click (two presses within 250 ms): rapid fire starts**. Release the button to stop the rapid fire
+- Example: when you want to switch between normal input and rapid fire on the same button
 
-### 3.4 トグル（MODE_TOGGLE）
+### 3.4 Toggle (MODE_TOGGLE)
 
-- ボタンを**押すたびに、連射のON／OFFが切り替わります**
-- ONの間はボタンを離しても連射が続きます。もう一度押すと止まります
-- 用途例：長時間連射を維持したい操作
+- **Each press switches rapid fire ON / OFF**
+- While ON, rapid fire continues even after you let go of the button. Press it again to stop
+- Example: inputs you want to keep auto-firing for a long time
 
-### 3.5 連射の速さについて
+### 3.5 About rapid-fire speed
 
-連射の速さは、次の2つの時間の組み合わせで決まります。
+Rapid-fire speed is determined by the combination of two times.
 
-| 項目 | 意味 | 設定範囲 | 刻み |
+| Item | Meaning | Range | Step |
 |---|---|---|---|
-| ON時間（on_ms） | 1回の入力でボタンを押している時間 | 20〜500ms | 5ms |
-| OFF時間（off_ms） | 入力と入力の間でボタンを離している時間 | 50〜500ms | 5ms |
+| ON time (on_ms) | How long the button is held down for one input | 20–500 ms | 5 ms |
+| OFF time (off_ms) | How long the button is released between inputs | 50–500 ms | 5 ms |
 
-連射の周期は「ON時間＋OFF時間」で、最短70ms〜最長1,000ms（毎秒約1〜14回）です。
-出荷時の初期値は、全ボタン通常モード、ON時間 35ms／OFF時間 250ms です。
+The cycle is "ON time + OFF time", from a minimum of 70 ms to a maximum of 1,000 ms (roughly 1–14 shots per second).
+Factory defaults: all buttons in Normal mode, ON time 35 ms / OFF time 250 ms.
 
 ---
 
-## 4. 設定モード（本体ボタンでの設定）
+## 4. Config mode (configuring with the controller buttons)
 
-コントローラー本体のボタン操作だけで、各ボタンのモードと連射の速さ、虹色LEDの有効／無効を設定できます。
+You can set each button's mode and rapid-fire speed, and enable/disable the rainbow LED, using only the buttons on the controller itself.
 
-### 4.1 設定モードへの入り方
+### 4.1 Entering config mode
 
-1. **L＋R＋ZL＋ZR を同時に押したまま、5秒間押し続けます**
-2. LED が「白→赤→緑→青」と順に点灯するアニメーションが表示され、設定モードに入ります
+1. **Hold L + R + ZL + ZR all at the same time for 5 seconds**
+2. The LED lights up in the sequence "white → red → green → blue", and config mode starts
 
-※設定モード中は、ゲームへのボタン入力は行われません。
-※設定モードに入ると、実行中のマクロはキャンセルされます。
+Note: While in config mode, no button input is sent to the game.
+Note: Entering config mode cancels any macro that is running.
 
-### 4.2 設定するボタンの選択
+### 4.2 Selecting the button to configure
 
-設定モードに入ったら、**設定したいボタンを1回押します**。そのボタンが「選択中」になり、現在の設定が LED に表示されます（「5. LED表示」参照）。
+Once in config mode, **press the button you want to configure once**. That button becomes "selected", and its current setting is shown on the LED (see "5. LED indications").
 
-### 4.3 設定操作一覧
+### 4.3 Configuration controls
 
-ボタン選択中は、以下の操作で設定を変更できます。押すたびに LED の表示が更新されます。
+While a button is selected, use the following controls to change its settings. The LED indication updates each time you press one.
 
-| 操作ボタン | 内容 |
+| Button | Action |
 |---|---|
-| ZR | モード切替（通常 → 連射 → ダブルクリック連射 → トグル → 通常 …） |
-| L | OFF時間を短くする（−5ms、下限50ms） |
-| R | OFF時間を長くする（＋5ms、上限500ms） |
-| ＋ | ON時間を長くする（＋5ms、上限500ms） |
-| － | ON時間を短くする（−5ms、下限20ms） |
-| HOME | 虹色LEDを有効にする（LEDが緑色に1.5秒点灯） |
-| SS | 虹色LEDを無効にする（LEDが赤色に1.5秒点灯） |
+| ZR | Switch mode (Normal → Rapid Fire → Double-Click Rapid Fire → Toggle → Normal …) |
+| L | Shorten OFF time (−5 ms, minimum 50 ms) |
+| R | Lengthen OFF time (+5 ms, maximum 500 ms) |
+| + | Lengthen ON time (+5 ms, maximum 500 ms) |
+| - | Shorten ON time (−5 ms, minimum 20 ms) |
+| HOME | Enable the rainbow LED (LED lights green for 1.5 seconds) |
+| Capture | Disable the rainbow LED (LED lights red for 1.5 seconds) |
 
-別のボタンを設定したい場合は、そのまま設定したいボタンを押してください。
+To configure a different button, simply press that button.
 
-### 4.4 設定モードの終了と保存
+### 4.4 Exiting config mode and saving
 
-1. **ZL を5秒間長押しします**
-2. LED のアニメーションが表示され、通常動作に戻ります
+1. **Hold ZL for 5 seconds**
+2. An LED animation is shown, and the board returns to normal operation
 
-**設定内容は、設定モードを終了した時点でフラッシュメモリに保存されます。**
-設定中に電源を切ると保存されませんので、必ず上記の手順で終了してください。
+**Settings are saved to flash memory when you exit config mode.**
+If you turn the power off while configuring, the settings will not be saved, so always exit using the procedure above.
 
 ---
 
-## 5. LED表示
+## 5. LED indications
 
-### 5.1 通常時
+### 5.1 In normal use
 
-- 虹色LEDが有効な場合、通常時は LED が虹色にゆっくり変化するアニメーション表示になります
-- 虹色LEDを無効にした場合、通常時の LED は消灯します
+- If the rainbow LED is enabled, the LED slowly cycles through rainbow colours in normal use
+- If the rainbow LED is disabled, the LED stays off in normal use
 
-### 5.2 設定モード中の表示
+### 5.2 In config mode
 
-選択中のボタンの設定を、以下のように表示します。
+The setting of the selected button is shown as follows.
 
-- **通常モード**：白色で点灯（点滅しません）
-- **連射／ダブルクリック連射／トグル**：モード色で、**そのボタンに設定された ON時間／OFF時間のタイミングそのままで点滅**します。実際の連射の速さを目で確認できます
+- **Normal mode**: lit white (steady, not blinking)
+- **Rapid Fire / Double-Click Rapid Fire / Toggle**: blinks in the mode colour, **using exactly the ON time / OFF time set for that button**, so you can see the actual rapid-fire speed with your own eyes
 
-| モード | LED色 |
+| Mode | LED colour |
 |---|---|
-| 連射（MODE_RAPID） | 赤 |
-| ダブルクリック連射（MODE_DOUBLE） | 緑 |
-| トグル（MODE_TOGGLE） | 青 |
+| Rapid Fire (MODE_RAPID) | Red |
+| Double-Click Rapid Fire (MODE_DOUBLE) | Green |
+| Toggle (MODE_TOGGLE) | Blue |
 
-点滅色の例外：
+Exceptions to the blinking colour:
 
-| 状態 | 表示 |
+| Condition | Indication |
 |---|---|
-| ON時間またはOFF時間が 100／200／300／400ms のとき | 白色で点滅 |
-| OFF時間が下限50ms／上限500ms、またはON時間が下限20ms／上限500ms のとき | 紫色で点滅 |
+| When the ON time or OFF time is 100 / 200 / 300 / 400 ms | Blinks white |
+| When the OFF time is at its minimum 50 ms / maximum 500 ms, or the ON time is at its minimum 20 ms / maximum 500 ms | Blinks purple |
 
-※両方に当てはまる場合は、白色点滅が優先されます。
-
----
-
-## 6. PC設定GUI（USB接続での設定）
-
-PC と基板を USB ケーブルで接続すると、ブラウザ上の設定 GUI からも設定できます。
-
-- 対応環境：Windows PC の **Chrome／Edge** など、シリアル通信（Web Serial）に対応した Web ブラウザ
-- 設定 GUI は公開リポジトリ（GitHub）で配布しています
-- GUI では、16ボタンそれぞれのモード・ON時間・OFF時間、虹色LEDの有効／無効、マクロ（「8. マクロ」参照）を設定できます
-- GUI で変更した設定は、その都度フラッシュメモリへ自動保存されます
-
-※GUI から連射モードを設定しようとしたボタンが、有効なマクロで使用されている場合はエラーとなり、設定は変更されません。先にマクロを無効化するか、マクロ側のボタン割り当てを変更してください（逆に、マクロ側の設定が連射設定と競合する場合も同様にエラーとなります）。
+Note: If both conditions apply, the white blinking takes priority.
 
 ---
 
-## 7. 設定の保存について
+## 6. PC configuration GUI (configuration over USB)
 
-- ボタン設定・虹色LED設定・マクロ設定は、すべて本体のフラッシュメモリに保存されます
-- 電源を切っても設定は保持されます
-- 初回起動時（保存データがない場合）は、全ボタン通常モード、ON時間 35ms／OFF時間 250ms、虹色LED有効、で初期化されます
+By connecting the board to a PC with a USB cable, you can also configure it from a browser-based GUI.
+
+- Requirements: a web browser with Web Serial support, such as **Chrome / Edge** on a Windows PC
+- The configuration GUI is distributed in this GitHub repository
+- In the GUI you can set, for each of the 16 buttons, the mode, ON time and OFF time, as well as the rainbow LED on/off and the macros (see "8. Macros")
+- Settings changed in the GUI are saved to flash memory automatically each time
+
+Note: If you try to set a rapid-fire mode on a button that is used by an enabled macro, an error occurs and the setting is not changed. Either disable the macro first, or change the button assignment in the macro. (The reverse also applies: a macro setting that conflicts with a rapid-fire setting will result in an error.)
 
 ---
 
-## 8. マクロ
+## 7. About saved settings
 
-あらかじめ登録した一連のボタン操作を、決まった2ボタンの同時押しで呼び出す機能です。
+- Button settings, the rainbow LED setting and macro settings are all saved in the board's flash memory
+- Settings are kept even when the power is off
+- On first start-up (when no saved data exists), the board is initialised with: all buttons in Normal mode, ON time 35 ms / OFF time 250 ms, rainbow LED enabled
 
-### 8.1 マクロの仕様
+---
 
-| 項目 | 内容 |
+## 8. Macros
+
+A macro plays back a pre-registered sequence of button actions when you press a designated pair of two buttons at the same time.
+
+### 8.1 Macro specifications
+
+| Item | Details |
 |---|---|
-| プリセット数 | 最大4個 |
-| 1プリセットの操作数 | 最大20操作（ステップ） |
-| 1操作の内容 | 押すボタンの組み合わせ（複数ボタンの同時押し可）＋ 保持時間 ＋ 待機時間 |
-| 時間の単位 | フレーム（60FPS基準、1フレーム＝約16.7ms） |
-| 保持時間／待機時間の範囲 | 各1〜600フレーム |
-| ループ | プリセットごとに、繰り返し実行の有効／無効を設定可能 |
+| Number of presets | Up to 4 |
+| Actions per preset | Up to 20 actions (steps) |
+| Contents of one action | A combination of buttons to press (multiple buttons can be pressed at the same time) + hold time + wait time |
+| Time unit | Frames (60 FPS basis, 1 frame ≈ 16.7 ms) |
+| Hold time / wait time range | 1–600 frames each |
+| Looping | Can be enabled/disabled per preset |
 
-### 8.2 マクロの設定方法
+### 8.2 How to set up a macro
 
-マクロの設定は、PC設定GUI（「6. PC設定GUI」参照）から行います。各プリセットには以下を設定します。
+Macros are set up from the PC configuration GUI (see "6. PC Configuration GUI"). For each preset you set:
 
-- 有効／無効
-- 起動トリガーとなる2つのボタン
-- ループ実行の有効／無効
-- トリガーボタンの入力をゲーム側にも通すかどうか（通常は通しません）
-- 操作（ステップ）の並び：押すボタン、保持フレーム数、次の操作までの待機フレーム数
+- Enabled / disabled
+- The two trigger buttons
+- Looping on/off
+- Whether the trigger buttons' input is also passed through to the game (normally it is not)
+- The sequence of actions (steps): the buttons to press, the hold time in frames, and the wait time in frames until the next action
 
-設定はフラッシュメモリに保存され、電源を切っても保持されます。
+Macro settings are saved to flash memory and are kept even when the power is off.
 
-### 8.3 マクロの起動と停止
+### 8.3 Starting and stopping a macro
 
-- **起動**：設定した2つのボタンを同時押しします（押し順はどちらが先でも構いませんが、**1つ目を押してから100ms以内に2つ目を押してください**）
-- 起動中、トリガーの2ボタンは（「ゲーム側にも通す」設定にしていない限り）ゲーム側には入力されません
-- 一度起動したら、トリガーの2ボタンを両方離すまでは再起動しません
-- **停止**：マクロの実行中に、**トリガー以外のボタンを押す**とマクロは停止します（誤操作防止のため、起動直後の300ms間は停止操作を受け付けません）
-- ループ設定が有効なプリセットは、停止操作をするまで繰り返し実行されます
+- **Start**: press the two designated buttons at the same time (the order does not matter, but **press the second button within 100 ms of the first**)
+- While a macro is running, the two trigger buttons are not sent to the game (unless "pass through to the game" is enabled)
+- Once started, a macro will not restart until both trigger buttons have been released
+- **Stop**: while a macro is running, **pressing any button other than the trigger buttons** stops the macro (to prevent accidental stops, stop input is ignored for the first 300 ms after start)
+- A preset with looping enabled repeats until you perform the stop action
 
-### 8.4 マクロ使用時の注意
+### 8.4 Notes on using macros
 
-- **マクロで使用するボタン（トリガー2つと、ステップに含まれるすべてのボタン）は、動作モードを「通常（MODE_OFF）」にしておいてください。** 連射などのモードが設定されているボタンを使ったマクロは、ファームウェア側で競合として判定され、設定時にエラーとなります
-- 出荷時の初期状態では、すべてのマクロプリセットは無効になっています
-
----
-
-## 9. 省電力機能（スリープ）
-
-- **60秒間ボタン操作がない**場合、自動的にディープスリープへ移行します（Powman による全電源ドメインOFFの本格的な省電力状態です）
-- スリープへ移行する際、LED は消灯し、ボタン出力とマクロは停止します
-- **復帰は HOME／A／ZL／ZR のいずれかのボタンを押します**
-- 以下の場合はスリープへ移行しません：
-- 設定モード中
-- PC と USB 接続中で、ホスト側が接続を維持している間
+- **All buttons used by a macro (the two trigger buttons and every button included in the steps) must be set to Normal mode (MODE_OFF).** If a button used by a macro has a rapid-fire or other mode set, the firmware treats it as a conflict and the macro setting will result in an error
+- In the factory default state, all macro presets are disabled
 
 ---
 
-## 10. ファームウェア更新
+## 9. Power saving (sleep)
 
-ファームウェアは、UF2 ファイルのドラッグ＆ドロップで書き換えできます。
-
-1. 基板上の BOOT 用ボタンを押し続けます
-2. ボタンを押したまま、PC と基板を USB ケーブルで接続します
-3. PC 上に USB ストレージとして表示されます（ドライブ名は「RP2350」）
-4. UF2 ファイル（ファームウェア）をそのドライブへドラッグ＆ドロップします
-5. 自動的に再起動し、書き込みが完了します（書き込み後は USB ストレージは自動的に切断されます）
-
-※更新中は USB ケーブルを抜かないでください。
-※書き込みに失敗した場合は、再度 BOOT 操作からやり直してください。
-※配布ファームウェアとマニュアルは GitHub で公開しています（関連リンクは本書末尾）。
+- If **no button is operated for 60 seconds**, the board automatically enters deep sleep (a true low-power state using Powman, with all power domains off)
+- When entering sleep, the LED turns off, and button output and macros stop
+- **To wake up, press HOME, A, ZL or ZR**
+- The board does not enter sleep in the following cases:
+  - While in config mode
+  - While connected to a PC over USB and the host keeps the connection alive
 
 ---
 
-## 11. 組み立てについて
+## 10. Firmware update
 
-- 組み立てには精密ドライバー1本があればOKです。ピンセットがあると組み立てしやすいです
-- コントローラー本体への加工は不要です
-- ※基板交換時に純正の振動モーターを移植する必要があります。モーターを使用しない場合は振動機能が使用できません
-- 組み立て・セッティング方法の解説動画を YouTube で公開しています：
+The firmware can be updated by drag-and-drop of a UF2 file.
+
+1. Keep holding the BOOT button on the board
+2. While holding the button, connect the board to a PC with a USB cable
+3. The board appears on the PC as a USB storage drive (drive name: "RP2350")
+4. Drag and drop the UF2 file (firmware) onto that drive
+5. The board reboots automatically and the update is complete (the USB storage disconnects automatically after writing)
+
+Note: Do not unplug the USB cable during the update.
+Note: If the write fails, start again from the BOOT procedure.
+Note: The distributed firmware and manuals are published on GitHub (see the links at the end of this document).
+
+---
+
+## 11. Assembly
+
+- All you need is one precision screwdriver. Tweezers make assembly easier
+- No modification of the controller body is required
+- Note: When replacing the board, the original vibration motor must be transplanted. If the motor is not used, the vibration function will not be available
+- Assembly and setup videos are published on YouTube:
   https://www.youtube.com/playlist?list=PLq0JCu-0TrIZ6aA_hGS-kB6uELTtWY_ja
-- ※解説動画は旧世代基板（RP2040版）の内容です。現行品（ver2.1／RP2354）とは機能の仕様が異なりますが、取り付け手順は現行基板でも共通です。機能については本書と GitHub のマニュアルをご確認ください
+- Note: The videos cover the previous-generation board (RP2040 version). The functions differ from the current product (ver2.1 / RP2354), but the installation steps are the same for the current board. For the functions, please refer to this manual and the manual on GitHub
 
 ---
 
-## 12. 注意事項
+## 12. Notes
 
-- NFC アンテナが無いので、amiibo の読み取りはできません
-- 本製品はコントローラー本体ではありません（完成品を除く）。コントローラー本体は別途ご用意ください
-- 純正コントローラーを分解することで、任天堂公式のサポートを受けられなくなる可能性がございます
-- 商品の性質上、個別のサポートは原則行っておりません
-- 部品構成等が一部変更となる場合がございます
-- 本商品は非公式の改造品です。本商品を使用したことによって発生した損害・不利益について、当方では一切の責任を負いかねます。使用は自己責任でお願いいたします
-- 設定モード中はゲーム操作は行われません。また、設定中に電源を切らないでください（保存失敗の防止のため）
+- There is no NFC antenna, so amiibo cannot be read
+- This product is not a controller by itself (except for the complete units sold with a controller). Please prepare a controller separately
+- Disassembling an official controller may make you ineligible for Nintendo's official support
+- As a rule, individual support is not provided for this product
+- The parts composition and other details may change in part
+- This is an unofficial modification product. The seller accepts no responsibility for any damage or disadvantage arising from the use of this product. Use at your own risk
+- No game input is performed while in config mode. Also, do not turn the power off while configuring (to prevent save failures)
 
 ---
 
-## 13. トラブルシューティング
+## 13. Troubleshooting
 
-| 症状 | 確認事項 |
+| Symptom | What to check |
 |---|---|
-| 設定したはずの内容が元に戻っている | 設定モードは ZL の5秒長押しで終了しましたか？設定は終了時に保存されます。設定中に電源を切ると保存されません |
-| 連射の速さが変えられない | 設定モードでボタンを選択した後、ON時間は ＋／－、OFF時間は R／L で変更します。上下限（ON 20〜500ms／OFF 50〜500ms）に達すると LED が紫色に点滅します |
-| 連射が止まらない | トグルモードになっていないか確認してください。トグルは押すたびに連射のON／OFFが切り替わります。連射モードでダブルクリックした場合も、押している間はONが継続します |
-| マクロが起動しない | プリセットが有効になっているか／トリガーの2ボタンを100ms以内に続けて押しているか／トリガーとステップで使うボタンがすべて通常モードになっているか、を確認してください |
-| マクロの設定がエラーになる | トリガーやステップで使うボタンに連射などのモードが設定されていると競合エラーになります。先にそれらのボタンを通常モードにしてください |
-| GUI からボタンの設定ができない | そのボタンが有効なマクロで使用されているとエラーになります。先にマクロを無効化するか、マクロのボタン割り当てを変更してください |
-| スリープから復帰しない | 復帰できるのは HOME／A／ZL／ZR のいずれかです。他のボタンでは復帰しません |
-| 設定を初期状態に戻したい | v8 のボタン操作に初期化操作は用意されていません。初期化したい場合は、このリポジトリの Factory_Reset.uf2 を「10. ファームウェア更新」と同じ手順で書き込んでください。個別に変更する場合は、設定モードで1ボタンずつ変更するか、GUI から変更してください |
+| Settings I made have reverted | Did you exit config mode by holding ZL for 5 seconds? Settings are saved when you exit. If you turn the power off while configuring, they are not saved |
+| I cannot change the rapid-fire speed | After selecting a button in config mode, change the ON time with + / - and the OFF time with R / L. When you reach the limits (ON 20–500 ms / OFF 50–500 ms), the LED blinks purple |
+| Rapid fire won't stop | Check whether the button is in Toggle mode. In Toggle mode, each press switches rapid fire ON/OFF. Also, in Rapid Fire mode, a double-click keeps the input ON while you hold the button |
+| A macro won't start | Check that the preset is enabled, that you are pressing the second trigger button within 100 ms of the first, and that all buttons used by the trigger and the steps are in Normal mode |
+| Setting a macro gives an error | If a rapid-fire or other mode is set on a button used by the trigger or the steps, a conflict error occurs. Set those buttons to Normal mode first |
+| I cannot configure a button from the GUI | If the button is used by an enabled macro, an error occurs. Disable the macro first, or change the button assignment in the macro |
+| The board won't wake from sleep | Only HOME / A / ZL / ZR can wake the board. Other buttons do not wake it |
+| I want to restore the factory settings | Firmware v8 has no factory-reset operation in its button controls. To reset, flash Factory_Reset.uf2 from this repository using the same procedure as in "10. Firmware update". To change settings individually, use config mode button by button, or use the GUI |
 
 ---
 
-## 関連リンク
+## Links
 
-- 商品ページ（BOOTH）：https://xgames.booth.pm/items/6925334
-- 説明書・ファームウェア・設定GUI（GitHub）：https://github.com/Texsugi/NS_Pro_contoroller_rapidfire
-- ファームウェア v8 ソースコード（GitHub）：https://github.com/Texsugi/pro16sw_v8
+- Product page (BOOTH): https://xgames.booth.pm/items/6925334
+- Manual, firmware and configuration GUI (GitHub): https://github.com/Texsugi/NS_Pro_contoroller_rapidfire
+- Firmware v8 source code (GitHub): https://github.com/Texsugi/pro16sw_v8
