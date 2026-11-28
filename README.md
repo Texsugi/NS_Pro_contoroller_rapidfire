@@ -16,7 +16,7 @@ Nintendo Switch 純正 Pro コントローラー専用 連射改造基板「RENC
 | GUI_MANUAL.md | PC設定GUI のマニュアル |
 | Factory_Reset.uf2 | 設定初期化用ファームウェア。書き込むと設定が初期状態に戻ります（「13. トラブルシューティング」参照） |
 | Rapidfire_fw_v2.uf2 | 旧バージョン用ファームウェア（旧基板・旧世代用） |
-| MicroPython_fw.uf2 | MicroPython用ファームウェア |
+| MicroPython_fw.uf2 | 旧バージョン用ファームウェア（旧基板・旧世代用） |
 
 ※現行の基板 ver2.1 には Rapidfire2.1_fw_v8.uf2 を使用してください。旧バージョン用ファイルは現行基板では使用しないでください。
 
